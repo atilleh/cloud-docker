@@ -1,0 +1,114 @@
+version: '3'
+services:
+# syncthing ------------------------------------
+  syncthing:
+    image: linuxserver/syncthing
+    container_name: syncthing
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Paris
+      UMASK_SET: '022'
+    volumes:
+      - ./opt/cloud-automated/syncthing/config:/config
+      - ./data:/data
+      - ./opt/cloud-automated/transmission/downloads/complete:/transmission-data
+    ports:
+      - 8384
+      - 22001:22000
+      - 21028:21027/udp
+    restart: unless-stopped
+
+# transmission ------------------------------------
+  transmission:
+    image: linuxserver/transmission
+    container_name: transmission
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Paris
+      TRANSMISSION_WEB_HOME: '/transmission-web-control/'
+    volumes:
+      - ./opt/cloud-automated/transmission/config:/config
+      - ./opt/cloud-automated/transmission/downloads:/downloads
+      - ./opt/cloud-automated/transmission/watch:/watch
+    ports:
+      - 9091
+      - 0.0.0.0:51413:51413
+      - 0.0.0.0:51413:51413/udp
+    restart: unless-stopped
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+
+# magnetico ------------------------------------
+  magneticod:
+    image: boramalper/magneticod
+    container_name: magneticod
+    volumes:
+      - ./opt/cloud-automated/magneticod/data:/root/.local/share/magneticod
+      - ./opt/cloud-automated/magneticod/config:/root/.config/magneticod
+    network_mode: 'host'
+    command:
+      - '--indexer-addr=0.0.0.0:1212'
+
+  magneticow:
+    image: boramalper/magneticow
+    container_name: magneticow
+    environment:
+      PUID: 1000
+      PGID: 1000
+    volumes:
+      - ./opt/cloud-automated/magneticod/data:/root/.local/share/magneticod
+      - ./opt/cloud-automated/magneticow/config:/root/.config/magneticow
+    ports:
+      - 8080:8080
+
+# nginx ------------------------------------
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    depends_on:
+      - magneticow
+      - transmission
+      - syncthing
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./htpasswd:/htpasswd
+    ports:
+      - 0.0.0.0:80:80
+      - 0.0.0.0:443:443
+    environment:
+      ENV: production
+
+# filerun ------------------------------------
+  filerun_db:
+    image: mariadb:10.1
+    container_name: filerun_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: filerun
+      MYSQL_PASSWORD: filerun
+      MYSQL_DATABASE: filerun
+    volumes:
+      - ./opt/cloud-automated/filerun/db:/var/lib/mysql
+
+  filerun_web:
+    image: afian/filerun
+    container_name: filerun_web
+    environment:
+      FR_DB_HOST: filerun_db
+      FR_DB_PORT: 3306
+      FR_DB_NAME: filerun
+      FR_DB_USER: filerun
+      FR_DB_PASS: filerun
+      APACHE_RUN_USER: www-data
+      APACHE_RUN_USER_ID: 33
+      APACHE_RUN_GROUP: www-data
+      APACHE_RUN_GROUP_ID: 33
+    ports:
+      - 80
+    depends_on:
+      - filerun_db
+    volumes:
+      - ./opt/cloud-automated/filerun/html:/var/www/html
+      - ./opt/cloud-automated/transmission/downloads:/user-files

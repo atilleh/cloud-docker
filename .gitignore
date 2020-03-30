@@ -1,0 +1,3 @@
+/opt/cloud-automated/filerun/db/*
+/opt/cloud-automated/
+!/opt/cloud-automated/magneticow/config/credentials
