@@ -30,7 +30,8 @@ services:
       TRANSMISSION_WEB_HOME: '/transmission-web-control/'
     volumes:
       - ./opt/cloud-automated/transmission/config:/config
-      - ./opt/cloud-automated/transmission/downloads:/downloads
+      - ./data/downloads:/downloads
+      - ./data:/data
       - ./opt/cloud-automated/transmission/watch:/watch
     ports:
       - 9091
