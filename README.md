@@ -6,7 +6,7 @@ cloud service.*
 ## Stack
 
 * **Syncthing** for file synchronization between multiple devices
-* **Filerun** to explore stored files
+* **Filerun** to explore downloaded torrents
 * **Transmission** and its web UI to download torrents
 * **Magnetico[w|d]** to locally index torrents
 * **Nginx** to proxify and secure a little bit more the service.
@@ -30,9 +30,10 @@ cloud service.*
 ```
 git clone
 cd docker-cloud
-htpasswd -c htpasswd YOUR_USERNAME  # basic auth user database
+htpasswd -B -c htpasswd YOUR_USERNAME  # basic auth user database
 vim nginx.conf                      # replace server_name directives
-docker-compose build
+cp htpasswd ./opt/cloud-automated/magneticow/config/credentials    # requires Bcrypt encryption
+
 docker-compose up -d
 ```
 
