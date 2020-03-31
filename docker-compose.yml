@@ -74,9 +74,12 @@ services:
     image: nginx:latest
     container_name: nginx
     depends_on:
+      - magneticod
       - magneticow
       - transmission
       - syncthing
+      - filerun_web
+      - filerun_db
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./htpasswd:/htpasswd
@@ -119,4 +122,5 @@ services:
       - filerun_db
     volumes:
       - ./opt/cloud-automated/filerun/html:/var/www/html
-      - ./opt/cloud-automated/transmission/downloads:/user-files
+      - ./data:/user-files
+    restart: unless-stopped
