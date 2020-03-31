@@ -54,6 +54,9 @@ services:
 
   magneticow:
     image: boramalper/magneticow
+    build:
+      context: .
+      dockerfile: magnetico.Dockerfile
     container_name: magneticow
     environment:
       PUID: 1000
