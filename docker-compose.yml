@@ -51,6 +51,7 @@ services:
     network_mode: 'host'
     command:
       - '--indexer-addr=0.0.0.0:1212'
+    restart: unless-stopped
 
   magneticow:
     image: boramalper/magneticow
@@ -66,6 +67,7 @@ services:
       - ./opt/cloud-automated/magneticow/config:/root/.config/magneticow
     ports:
       - 8080:8080
+    restart: unless-stopped
 
 # nginx ------------------------------------
   nginx:
@@ -83,6 +85,7 @@ services:
       - 0.0.0.0:443:443
     environment:
       ENV: production
+    restart: unless-stopped
 
 # filerun ------------------------------------
   filerun_db:
@@ -95,6 +98,7 @@ services:
       MYSQL_DATABASE: filerun
     volumes:
       - ./opt/cloud-automated/filerun/db:/var/lib/mysql
+    restart: unless-stopped
 
   filerun_web:
     image: afian/filerun
