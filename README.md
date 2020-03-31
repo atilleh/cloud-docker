@@ -24,6 +24,26 @@ cloud service.*
 
 ### Quick guide
 
+In any case, you MUST have 4 domains pointing to your server IP.
+
+```
+*.cloud IN A YOUR_IP_ADDRESS
+# or
+syncthing.cloud IN A YOUR_IP_ADDRESS
+transmission.cloud IN A YOUR_IP_ADDRESS
+magneticow.cloud IN A YOUR_IP_ADDRESS
+filerun.cloud IN A YOUR_IP_ADDRESS
+```
+
+ONCE THIS IS DONE, the easiest way to deploy this script is to clone the repository and launch the
+following command to set-up your cloud, just follow the guide.
+
+```
+./install.sh
+```
+
+### Manual installation
+
 * You need to create a htpasswd that will be used in Nginx container
 * You also need to update the domain names attributed to each service, in `nginx.conf`
 
@@ -37,7 +57,7 @@ cp htpasswd ./opt/cloud-automated/magneticow/config/credentials    # requires Bc
 docker-compose up -d
 ```
 
-## Configuration
+#### Configuration
 
 After a first launch, stop the containers and update `opt/cloud-automated/transmission/config/settings.json`
 file and its `rpc-host-whitelist` parameter : you need to add the domain used by Nginx
