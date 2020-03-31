@@ -61,3 +61,35 @@ transmission.cloud IN A YOUR_IP_ADDRESS
 magneticow.cloud IN A YOUR_IP_ADDRESS
 filerun.cloud IN A YOUR_IP_ADDRESS
 ```
+
+## How to use
+
+### Download torrents
+
+Transmission front-end is protected by Nginx container and the created `htpasswd` file.
+You can access it at `transmission.cloud.your_domain.tld`.
+\
+When adding a torrent, the two following locations are available:
+
+```
+/downloads/complete         # default
+/data                       # anything you wanna organize (Music, Movies, Videos, Photos...)
+```
+
+#### Potential issues
+You could encounter a non-connectivity to the torrents trackers. Please mind you have to add/uncomment `net.ipv4.ip_forward=1` in `/etc/sysctl.conf`.
+
+### Navigate within folders
+
+Downloaded or uploaded using Syncthing, you can navigate within your folders stored in `./data` using Filerun.
+Default username and password are `superuser/superuser`. Please mind to update it.
+\
+Filerun basically replaces a potential Nextcloud to download and view files.
+
+### Search for torrents
+
+Torrents are automatically indexed by Magnetico. Since the exploration and indexing step is based on DHT, it can take several days before having access to most searched torrents. Be patient.
+
+#### Potential issues
+
+Magneticow (web interface of Magnetico) Docker image has a missing package - until it is not resolved on its Github repository (https://github.com/boramalper/magnetico/pull/243), this repository owns a `magneticow.Dockerfile` that must be build to be used by this installation.
