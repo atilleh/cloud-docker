@@ -72,7 +72,7 @@ update_transmission () {
   echo "What is transmission domain ? :"
   read domain
 
-  sed -i "s/\"jq \": \"\",/\"rpc-host-whitelist\": \"$domain\",/g" $configPath
+  sed -i "s/\"rpc-host-whitelist\": \"\",/\"rpc-host-whitelist\": \"$domain\",/g" $configPath
   echo "Should be fine: let's check that!"
   grep "rpc-host-whitelist" $configPath
 }
